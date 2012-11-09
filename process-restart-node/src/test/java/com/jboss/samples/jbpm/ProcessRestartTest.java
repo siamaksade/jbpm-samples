@@ -7,6 +7,9 @@ import org.drools.KnowledgeBase;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
+import org.drools.event.DebugProcessEventListener;
+import org.drools.event.rule.DebugAgendaEventListener;
+import org.drools.event.rule.DebugWorkingMemoryEventListener;
 import org.drools.io.ResourceFactory;
 import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
@@ -23,7 +26,6 @@ public class ProcessRestartTest {
 		KnowledgeBuilder kbuilder = createKnowledgeBase("process/process-1.0.bpmn");
 		KnowledgeBase kbase = kbuilder.newKnowledgeBase();
 		StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
-		KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, "test", 1000);
 
 		// start process
 		ProcessInstance processInstance = ksession.startProcess("process-1.0");
@@ -46,8 +48,6 @@ public class ProcessRestartTest {
 		// signal continue
 		System.out.println(">> Signaling Continue...");
 		ksession.signalEvent("Continue", "", processInstance.getId());
-		
-		logger.close();
 	}
 
 	private void sleep(long ms) {
