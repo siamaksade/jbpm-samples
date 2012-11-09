@@ -1,0 +1,12 @@
+target/
+.settings/
+.classpath
+.project
+*.log
+bin/
+*.lock
+*.DS_Store
+*.swp
+*.out
+soapui/
+.xml/
