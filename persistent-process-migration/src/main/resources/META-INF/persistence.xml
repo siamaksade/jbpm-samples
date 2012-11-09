@@ -20,15 +20,17 @@
       <property name="hibernate.connection.username" value="sa"/>
       <property name="hibernate.connection.password" value="sa"/>
 <!--       <property name="hibernate.connection.url" value="jdbc:h2:tcp://10.33.46.75:9092/~/jbpm;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1"/> -->
-      <property name="hibernate.connection.url" value="jdbc:h2:file:${java.io.tmpdir}/db/jbpm;DB_CLOSE_DELAY=-1"/>
+<!--       <property name="hibernate.connection.url" value="jdbc:h2:file:${java.io.tmpdir}/db/jbpm;DB_CLOSE_DELAY=-1"/> -->
+	  <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/jbpm"/>
       <property name="hibernate.connection.autocommit" value="false"/>
       
-      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+<!--       <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/> -->
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
 <!--       <property name="hibernate.hbm2ddl.auto" value="create"/> -->
       <property name="hibernate.listeners.envers.autoRegister" value="false"/>
       <property name="hibernate.max_fetch_depth" value="3"/>
-      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.show_sql" value="false"/>
 
       <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.BTMTransactionManagerLookup"/>
     </properties>

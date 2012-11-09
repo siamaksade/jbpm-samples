@@ -18,10 +18,12 @@ import org.drools.command.Context;
 import org.drools.command.impl.CommandBasedStatefulKnowledgeSession;
 import org.drools.command.impl.GenericCommand;
 import org.drools.command.impl.KnowledgeCommandContext;
+import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.persistence.jpa.JPAKnowledgeService;
 import org.drools.runtime.Environment;
 import org.drools.runtime.EnvironmentName;
 import org.drools.runtime.StatefulKnowledgeSession;
+import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
 import org.jbpm.workflow.instance.WorkflowProcessInstanceUpgrader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,16 +32,6 @@ import bitronix.tm.TransactionManagerServices;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
 public class ProcessMigrator {
-	private static final String DATASOURCE_CLASS = "org.h2.jdbcx.JdbcDataSource";
-
-//	private static final String DB_URL = "jdbc:h2:tcp://10.33.46.75:9092/~/jbpm;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1";
-	private static final String DB_URL = "jdbc:h2:file:" + System.getProperty("java.io.tmpdir") + "/db/jbpm;DB_CLOSE_DELAY=-1";
-	
-
-	private static final String DB_USERNAME = "sa";
-
-	private static final String DB_PASSWORD = "sa";
-
 	private static final Logger LOG = LoggerFactory.getLogger(ProcessMigrator.class);
 
 	private StatefulKnowledgeSession knowledgeSession;
@@ -50,9 +42,11 @@ public class ProcessMigrator {
 	private DataSource dataSource;
 
 	public ProcessMigrator(final List<String> processFiles) {
-		dataSource = createDataSource();
+		dataSource = createPGDataSource();
 		emf = createEntityManagerFactory();
 		knowledgeSession = createStatefulKnowledgeSession(processFiles);
+		new JPAWorkingMemoryDbLogger(knowledgeSession);
+		KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(knowledgeSession, "target/trace", 1000);
 	}
 
 	@SuppressWarnings("serial")
@@ -102,15 +96,33 @@ public class ProcessMigrator {
 		return Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa");
 	}
 
-	public PoolingDataSource createDataSource() {
+	public PoolingDataSource createH2DataSource() {
 		PoolingDataSource pds = new PoolingDataSource();
 		pds.setUniqueName("java:jboss/datasources/jbpmDS");
-		pds.setClassName(DATASOURCE_CLASS);
+		pds.setClassName("org.h2.jdbcx.JdbcDataSource");
 		pds.setMaxPoolSize(5);
 		pds.setAllowLocalTransactions(true);
-		pds.getDriverProperties().put("user", DB_USERNAME);
-		pds.getDriverProperties().put("password", DB_PASSWORD);
-		pds.getDriverProperties().put("URL", DB_URL);
+		pds.getDriverProperties().put("user", "sa");
+		pds.getDriverProperties().put("password", "sa");
+		pds.getDriverProperties().put("URL", "jdbc:h2:file:" + System.getProperty("java.io.tmpdir") + "/db/jbpm;DB_CLOSE_DELAY=-1");
+//		pds.getDriverProperties().put("URL", "jdbc:h2:tcp://10.33.46.75:9092/~/jbpm;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1");
+		
+		pds.init();
+		return pds;
+	}
+	
+	public PoolingDataSource createPGDataSource() {
+		PoolingDataSource pds = new PoolingDataSource();
+		pds.setUniqueName("java:jboss/datasources/jbpmDS");
+		pds.setClassName("org.postgresql.xa.PGXADataSource");
+		pds.setMaxPoolSize(5);
+		pds.setAllowLocalTransactions(true);
+		pds.getDriverProperties().put("user", "jbpm");
+		pds.getDriverProperties().put("password", "jbpm");
+		pds.getDriverProperties().put("serverName", "localhost");
+		pds.getDriverProperties().put("portNumber", "5432");
+		pds.getDriverProperties().put("databaseName", "jbpm");
+		
 		pds.init();
 		return pds;
 	}
