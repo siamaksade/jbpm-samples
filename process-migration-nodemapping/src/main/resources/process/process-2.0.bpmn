@@ -38,8 +38,8 @@
     <sequenceFlow id="_7-_5" sourceRef="_7" targetRef="_5" />
     <sequenceFlow id="_2-_6" sourceRef="_2" targetRef="_6" />
     <sequenceFlow id="_8-_7" sourceRef="_8" targetRef="_7" />
-    <sequenceFlow id="_6-_8" sourceRef="_6" targetRef="_8" />
     <sequenceFlow id="_4-_8" sourceRef="_4" targetRef="_8" />
+    <sequenceFlow id="_6-_8" sourceRef="_6" targetRef="_8" />
 
   </process>
 
@@ -82,12 +82,12 @@
         <di:waypoint x="344" y="80" />
         <di:waypoint x="441" y="80" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_6-_8" >
-        <di:waypoint x="248" y="120" />
-        <di:waypoint x="344" y="80" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_4-_8" >
         <di:waypoint x="248" y="40" />
+        <di:waypoint x="344" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_6-_8" >
+        <di:waypoint x="248" y="120" />
         <di:waypoint x="344" y="80" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
